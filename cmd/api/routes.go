@@ -17,5 +17,5 @@ func (app *application) routes() http.Handler {
 	router.HandlerFunc(http.MethodPatch, "/v1/links/:id", app.updateLinkHandler)
 	router.HandlerFunc(http.MethodDelete, "/v1/links/:id", app.deleteLinkHandler)
 
-	return app.logRequests(app.recoverPanic(router))
+	return app.logRequests(app.recoverPanic(app.enableCORS(router)))
 }
