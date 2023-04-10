@@ -3,6 +3,9 @@ package data
 import (
 	"database/sql"
 	"errors"
+	"os"
+
+	"github.com/rs/zerolog"
 )
 
 var (
@@ -18,13 +21,13 @@ type Models struct {
 }
 
 func NewModels(db *sql.DB) Models {
-	// infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
-	// errorLog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
+	infoLog := zerolog.New(os.Stdout).With().Logger()
+	errorLog := zerolog.New(os.Stderr).With().Logger()
 	return Models{
 		Links: LinkModel{
-			DB: db,
-			// InfoLog:  infoLog,
-			// ErrorLog: errorLog,
+			DB:       db,
+			InfoLog:  &infoLog,
+			ErrorLog: &errorLog,
 		},
 	}
 }

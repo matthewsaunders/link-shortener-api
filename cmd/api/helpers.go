@@ -143,37 +143,37 @@ func (app *application) readJSON(w http.ResponseWriter, r *http.Request, dst int
 	return nil
 }
 
-// // readString is a helper method on application type that returns a string value from the URL query
-// // string, or the provided default value if no matching key is found.
-// func (app *application) readStrings(qs url.Values, key string, defaultValue string) string {
-// 	// Extract the value for a given key from the URL query string.
-// 	// If no key exists this will return an empty string "".
-// 	s := qs.Get(key)
+// readString is a helper method on application type that returns a string value from the URL query
+// string, or the provided default value if no matching key is found.
+func (app *application) readStrings(qs url.Values, key string, defaultValue string) string {
+	// Extract the value for a given key from the URL query string.
+	// If no key exists this will return an empty string "".
+	s := qs.Get(key)
 
-// 	// If no key exists (or the value is empty) then return the default value
-// 	if s == "" {
-// 		return defaultValue
-// 	}
+	// If no key exists (or the value is empty) then return the default value
+	if s == "" {
+		return defaultValue
+	}
 
-// 	// Otherwise, return the string
-// 	return s
-// }
+	// Otherwise, return the string
+	return s
+}
 
-// // readCSV is a helper method on application type that reads a string value from the URL query
-// // string and then splits it into a slice on the comma character. If no matching key is found
-// // then it returns the provided default value.
-// func (app *application) readCSV(qs url.Values, key string, defaultValue []string) []string {
-// 	// Extract the value from the URL query string
-// 	csv := qs.Get(key)
+// readCSV is a helper method on application type that reads a string value from the URL query
+// string and then splits it into a slice on the comma character. If no matching key is found
+// then it returns the provided default value.
+func (app *application) readCSV(qs url.Values, key string, defaultValue []string) []string {
+	// Extract the value from the URL query string
+	csv := qs.Get(key)
 
-// 	// if no key exists (or the value is empty) then return the default value
-// 	if csv == "" {
-// 		return defaultValue
-// 	}
+	// if no key exists (or the value is empty) then return the default value
+	if csv == "" {
+		return defaultValue
+	}
 
-// 	// Otherwise, parse the value into a []string slice and return it.
-// 	return strings.Split(csv, ",")
-// }
+	// Otherwise, parse the value into a []string slice and return it.
+	return strings.Split(csv, ",")
+}
 
 // readInt is a helper method on application type that reads a string value from the URL query
 // string and converts it to an integer before returning. If no matching key is found then it
