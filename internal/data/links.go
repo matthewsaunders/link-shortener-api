@@ -218,3 +218,37 @@ func (m LinkModel) Delete(id uuid.UUID) error {
 func ValidateLink(v *validator.Validator, link *Link) {
 	// TODO
 }
+
+func (m LinkModel) GetByToken(token string) (*Link, error) {
+	query := `
+		SELECT id, token
+		FROM links
+		WHERE token = $1
+	`
+
+	var link Link
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	err := m.DB.QueryRowContext(ctx, query, token).Scan(
+		&link.ID,
+		&link.Token,
+	)
+
+	if err != nil {
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
+			return nil, ErrRecordNotFound
+		default:
+			return nil, err
+		}
+	}
+
+	return &link, nil
+}
+
+func (m LinkModel) GenerateNewToken() string {
+	token := generateRandStr(5)
+	return token
+}
