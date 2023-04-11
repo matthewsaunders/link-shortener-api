@@ -13,13 +13,13 @@ import (
 )
 
 type Link struct {
-	ID        uuid.UUID `json:"id"`
-	Name      string    `json:"name"`
-	Source    string    `json:"source"`
-	Token     string    `json:"token"`
-	CreatedAt time.Time `json:"-"`
-	UpdatedAt time.Time `json:"-"`
-	Version   int32     `json:"version"`
+	ID          uuid.UUID `json:"id"`
+	Name        string    `json:"name"`
+	Destination string    `json:"destination"`
+	Token       string    `json:"token"`
+	CreatedAt   time.Time `json:"-"`
+	UpdatedAt   time.Time `json:"-"`
+	Version     int32     `json:"version"`
 }
 
 type LinkModel struct {
@@ -30,7 +30,7 @@ type LinkModel struct {
 
 func (m LinkModel) Insert(link *Link) error {
 	query := `
-		INSERT INTO links (name, source, token)
+		INSERT INTO links (name, destination, token)
 		VALUES ($1, $2, $3)
 		RETURNING id, created_at, version
 		`
@@ -38,14 +38,14 @@ func (m LinkModel) Insert(link *Link) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	args := []interface{}{link.Name, link.Source, link.Token}
+	args := []interface{}{link.Name, link.Destination, link.Token}
 
 	return m.DB.QueryRowContext(ctx, query, args...).Scan(&link.ID, &link.CreatedAt, &link.Version)
 }
 
 func (m LinkModel) Get(id uuid.UUID) (*Link, error) {
 	query := `
-		SELECT id, name, source, token, created_at, updated_at, version
+		SELECT id, name, destination, token, created_at, updated_at, version
 		FROM links
 		WHERE id = $1
 	`
@@ -58,7 +58,7 @@ func (m LinkModel) Get(id uuid.UUID) (*Link, error) {
 	err := m.DB.QueryRowContext(ctx, query, id.String()).Scan(
 		&link.ID,
 		&link.Name,
-		&link.Source,
+		&link.Destination,
 		&link.Token,
 		&link.CreatedAt,
 		&link.UpdatedAt,
@@ -84,7 +84,7 @@ func (m LinkModel) GetAll(name string, filters Filters) ([]*Link, Metadata, erro
 	// parameter values for pagination implementation. The window function is used to calculate
 	// the total filtered rows which will be used in our pagination metadata.
 	query := fmt.Sprintf(`
-		SELECT count(*) OVER(), id, name, source, token, created_at, updated_at, version
+		SELECT count(*) OVER(), id, name, destination, token, created_at, updated_at, version
 		FROM links
 		WHERE (to_tsvector('simple', name) @@ plainto_tsquery('simple', $1) OR $1 = '')
 		ORDER BY %s %s, id ASC
@@ -122,7 +122,7 @@ func (m LinkModel) GetAll(name string, filters Filters) ([]*Link, Metadata, erro
 			&totalRecords, // Scan the count from the window function into totalRecords.
 			&link.ID,
 			&link.Name,
-			&link.Source,
+			&link.Destination,
 			&link.Token,
 			&link.CreatedAt,
 			&link.UpdatedAt,
@@ -152,14 +152,14 @@ func (m LinkModel) GetAll(name string, filters Filters) ([]*Link, Metadata, erro
 func (m LinkModel) Update(link *Link) error {
 	query := `
 		UPDATE links
-		SET name = $1, source = $2, token = $3, updated_at = NOW(), version = version + 1
+		SET name = $1, destination = $2, token = $3, updated_at = NOW(), version = version + 1
 		WHERE id = $4 AND version = $5
 		RETURNING version
 	`
 
 	args := []interface{}{
 		link.Name,
-		link.Source,
+		link.Destination,
 		link.Token,
 		link.ID,
 		link.Version, // Add the expected link version.
@@ -221,7 +221,7 @@ func ValidateLink(v *validator.Validator, link *Link) {
 
 func (m LinkModel) GetByToken(token string) (*Link, error) {
 	query := `
-		SELECT id, token
+		SELECT id, destination
 		FROM links
 		WHERE token = $1
 	`
@@ -233,7 +233,7 @@ func (m LinkModel) GetByToken(token string) (*Link, error) {
 
 	err := m.DB.QueryRowContext(ctx, query, token).Scan(
 		&link.ID,
-		&link.Token,
+		&link.Destination,
 	)
 
 	if err != nil {

@@ -11,6 +11,8 @@ func (app *application) routes() http.Handler {
 
 	router.HandlerFunc(http.MethodGet, "/v1/healthcheck", app.healthcheckHandler)
 
+	router.HandlerFunc(http.MethodGet, "/a/:token", app.createVisitHandler)
+
 	// Link CRUD
 	router.HandlerFunc(http.MethodGet, "/v1/links", app.listLinksHandler)
 	router.HandlerFunc(http.MethodPost, "/v1/links", app.createLinkHandler)

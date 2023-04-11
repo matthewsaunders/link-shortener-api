@@ -28,6 +28,17 @@ func (app *application) readIDParam(r *http.Request) (uuid.UUID, error) {
 	return id, nil
 }
 
+func (app *application) readTokenParam(r *http.Request) (string, error) {
+	params := httprouter.ParamsFromContext(r.Context())
+
+	token := params.ByName("token")
+	if token == "" {
+		return "", errors.New("invalid id parameter")
+	}
+
+	return token, nil
+}
+
 func (app *application) writeJSON(w http.ResponseWriter, status int, data envelope, headers http.Header) error {
 	js, err := json.MarshalIndent(data, "", "\t")
 	if err != nil {

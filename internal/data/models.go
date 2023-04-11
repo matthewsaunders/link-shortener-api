@@ -17,7 +17,8 @@ var (
 )
 
 type Models struct {
-	Links LinkModel
+	Links  LinkModel
+	Visits VisitModel
 }
 
 func NewModels(db *sql.DB) Models {
@@ -25,6 +26,11 @@ func NewModels(db *sql.DB) Models {
 	errorLog := zerolog.New(os.Stderr).With().Logger()
 	return Models{
 		Links: LinkModel{
+			DB:       db,
+			InfoLog:  &infoLog,
+			ErrorLog: &errorLog,
+		},
+		Visits: VisitModel{
 			DB:       db,
 			InfoLog:  &infoLog,
 			ErrorLog: &errorLog,

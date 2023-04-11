@@ -50,9 +50,9 @@ func (app *application) listLinksHandler(w http.ResponseWriter, r *http.Request)
 
 func (app *application) createLinkHandler(w http.ResponseWriter, r *http.Request) {
 	var input struct {
-		Name   string `json:"name"`
-		Source string `json:"source"`
-		Token  string `json:"token"`
+		Name        string `json:"name"`
+		Destination string `json:"destination"`
+		Token       string `json:"token"`
 	}
 
 	err := app.readJSON(w, r, &input)
@@ -62,9 +62,9 @@ func (app *application) createLinkHandler(w http.ResponseWriter, r *http.Request
 	}
 
 	link := &data.Link{
-		Name:   input.Name,
-		Source: input.Source,
-		Token:  input.Token,
+		Name:        input.Name,
+		Destination: input.Destination,
+		Token:       input.Token,
 	}
 
 	v := validator.New()
@@ -141,9 +141,9 @@ func (app *application) updateLinkHandler(w http.ResponseWriter, r *http.Request
 	// Use pointers so that we can use their zero values of nil as part of the partial record
 	// update logic.
 	var input struct {
-		Name   *string `json:"name"`
-		Source *string `json:"source"`
-		Token  *string `json:"token"`
+		Name        *string `json:"name"`
+		Destination *string `json:"destination"`
+		Token       *string `json:"token"`
 	}
 
 	err = app.readJSON(w, r, &input)
@@ -157,8 +157,8 @@ func (app *application) updateLinkHandler(w http.ResponseWriter, r *http.Request
 		link.Name = *input.Name
 	}
 
-	if input.Source != nil {
-		link.Source = *input.Source
+	if input.Destination != nil {
+		link.Destination = *input.Destination
 	}
 
 	if input.Token != nil {
