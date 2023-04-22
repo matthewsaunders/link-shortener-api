@@ -62,7 +62,7 @@ func (app *application) enableCORS(next http.Handler) http.Handler {
 					// preflight request.
 					if r.Method == http.MethodOptions && r.Header.Get("Access-Control-Request-Method") != "" {
 						// Set the necessary preflight response headers.
-						w.Header().Set("Access-Control-Allow-Methods", "OPTIONS, PUT, PATCH, DELETE")
+						w.Header().Set("Access-Control-Allow-Methods", "OPTIONS, GET, POST, PUT, PATCH, DELETE")
 						w.Header().Set("Access-Control-Allow-Headers", "Authorization, Content-Type")
 
 						// Set max cached times for headers for 60 seconds.
