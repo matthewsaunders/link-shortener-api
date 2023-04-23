@@ -61,6 +61,11 @@ func (app *application) createLinkHandler(w http.ResponseWriter, r *http.Request
 		return
 	}
 
+	// Generate a token for the link if one was not provided
+	if input.Token == "" {
+		input.Token = app.models.Links.GenerateNewToken()
+	}
+
 	link := &data.Link{
 		Name:        input.Name,
 		Destination: input.Destination,
@@ -209,6 +214,18 @@ func (app *application) deleteLinkHandler(w http.ResponseWriter, r *http.Request
 	}
 
 	err = app.writeJSON(w, http.StatusNoContent, envelope{"message": "list successfully deleted"}, nil)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+	}
+}
+
+func (app *application) linkVistsHandler(w http.ResponseWriter, r *http.Request) {
+	metrics := map[string]int{
+		"total_visits":   234_567,
+		"visits_per_day": 3_456,
+	}
+
+	err := app.writeJSON(w, http.StatusOK, envelope{"data": metrics}, nil)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 	}

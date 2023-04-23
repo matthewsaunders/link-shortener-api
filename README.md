@@ -35,6 +35,11 @@ psql --host=localhost --dbname=shrtnr --username=shrtnr
 migrate -path=./migrations -database=$SHRTNR_DB_DSN up
 ```
 
+3. Run the api
+```
+go run ./cmd/api
+go run ./cmd/api -cors-trusted-origins='http://localhost:3000'
+```
 
 ## APP Routes (shortener.com)
 
