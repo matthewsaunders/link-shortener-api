@@ -17,7 +17,7 @@ type Link struct {
 	Name        string    `json:"name"`
 	Destination string    `json:"destination"`
 	Token       string    `json:"token"`
-	CreatedAt   time.Time `json:"-"`
+	CreatedAt   time.Time `json:"created_at"`
 	UpdatedAt   time.Time `json:"-"`
 	Version     int32     `json:"version"`
 }
