@@ -41,21 +41,9 @@ go run ./cmd/api
 go run ./cmd/api -cors-trusted-origins='http://localhost:3000'
 ```
 
-## APP Routes (shortener.com)
+## Seeding the database
 
-GET     /
-GET     /dashboard
-GET     /links
-GET     /links/:id
-
-## API Routes (api.shortener.com)
-GET     /v1/links
-POST    /v1/links
-GET     /v1/links/:id
-UPDATE  /v1/links/:id
-DELETE  /v1/links/:id
-
-GET     /links/:id/views
-
-## Router Routes (shrtnr.com)
-GET     /:token
+To seed the database, run the following command from the root of the repo
+```
+go run ./cmd/seeder
+```

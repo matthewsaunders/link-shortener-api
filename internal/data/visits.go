@@ -13,7 +13,7 @@ import (
 type Visit struct {
 	ID         uuid.UUID `json:"id"`
 	LinkID     uuid.UUID `json:"link_id"`
-	CreatedAt  time.Time `json:"-"`
+	CreatedAt  time.Time `json:"created_at"`
 	Referrer   string    `json:"referrer"`
 	RemoteAddr string    `json:remote_address`
 }
