@@ -39,6 +39,21 @@ func (m VisitModel) Insert(visit *Visit) error {
 	return m.DB.QueryRowContext(ctx, query, args...).Scan(&visit.ID, &visit.CreatedAt)
 }
 
+func (m VisitModel) Seed(visit *Visit) error {
+	query := `
+		INSERT INTO visits (link_id, referrer, remote_address, created_at)
+		VALUES ($1, $2, $3, $4)
+		RETURNING id
+		`
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	args := []interface{}{visit.LinkID, visit.Referrer, visit.RemoteAddr, visit.CreatedAt}
+
+	return m.DB.QueryRowContext(ctx, query, args...).Scan(&visit.ID)
+}
+
 func ValidateVisit(v *validator.Validator, visit *Visit) {
 	// TODO
 }
