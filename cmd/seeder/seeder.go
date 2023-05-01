@@ -70,10 +70,9 @@ func (s *seeder) seedLink1() error {
 }
 
 func (s *seeder) seedLink2() error {
-	numDays := 10
+	numDays := 7
 	now := time.Now()
-	duration := time.Hour * 24 * -time.Duration(numDays)
-	linkTime := now.Add(duration)
+	linkTime := now
 
 	link := &data.Link{
 		Name:        "tailwindcss",

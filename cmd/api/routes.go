@@ -19,7 +19,7 @@ func (app *application) routes() http.Handler {
 	router.HandlerFunc(http.MethodGet, "/v1/links/:id", app.showLinkHandler)
 	router.HandlerFunc(http.MethodPatch, "/v1/links/:id", app.updateLinkHandler)
 	router.HandlerFunc(http.MethodDelete, "/v1/links/:id", app.deleteLinkHandler)
-	router.HandlerFunc(http.MethodGet, "/v1/links/:id/visits", app.linkVistsHandler)
+	router.HandlerFunc(http.MethodGet, "/v1/links/:id/visits", app.listLinkVisitsHandler)
 
 	router.HandlerFunc(http.MethodGet, "/v1/tokens/new", app.getNewLinkToken)
 

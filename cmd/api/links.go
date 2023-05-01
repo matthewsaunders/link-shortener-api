@@ -218,15 +218,3 @@ func (app *application) deleteLinkHandler(w http.ResponseWriter, r *http.Request
 		app.serverErrorResponse(w, r, err)
 	}
 }
-
-func (app *application) linkVistsHandler(w http.ResponseWriter, r *http.Request) {
-	metrics := map[string]int{
-		"total_visits":   234_567,
-		"visits_per_day": 3_456,
-	}
-
-	err := app.writeJSON(w, http.StatusOK, envelope{"data": metrics}, nil)
-	if err != nil {
-		app.serverErrorResponse(w, r, err)
-	}
-}
