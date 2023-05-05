@@ -9,6 +9,9 @@ import (
 	"sync"
 	"time"
 
+	"github.com/golang-migrate/migrate/v4"
+	"github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 	_ "github.com/lib/pq"
 	"github.com/matthewsaunders/link-shortener-api/internal/data"
 	"github.com/matthewsaunders/link-shortener-api/internal/vcs"
@@ -18,9 +21,10 @@ import (
 var version = vcs.Version()
 
 type config struct {
-	port int
-	env  string
-	db   struct {
+	port      int
+	env       string
+	migrateDB bool
+	db        struct {
 		dsn          string
 		maxOpenConns int
 		maxIdleConns int
@@ -46,6 +50,7 @@ func main() {
 	 */
 	flag.IntVar(&cfg.port, "port", 4000, "API server port")
 	flag.StringVar(&cfg.env, "env", "development", "Environment (development|staging|production")
+	flag.BoolVar(&cfg.migrateDB, "migrate-db", false, "Run DB migrations")
 
 	flag.StringVar(&cfg.db.dsn, "db-dsn", "postgres://shrtnr:password@localhost/shrtnr?sslmode=disable", "PostgreSQL DSN")
 
@@ -66,6 +71,7 @@ func main() {
 	/*
 	 * Setup database connection
 	 */
+	logger.Info().Msg("Opening DB connection")
 	db, err := openDB(cfg)
 	if err != nil {
 		logger.Fatal().Err(err).Msg("")
@@ -78,8 +84,20 @@ func main() {
 	}()
 
 	/*
+	 * Migrate DB
+	 */
+	logger.Info().Msg("Migrating DB")
+	if cfg.migrateDB {
+		err = migrateDB(db)
+		if err != nil {
+			logger.Fatal().Err(err).Msg("Failed to migrate DB")
+		}
+	}
+
+	/*
 	 * Start application server
 	 */
+	logger.Info().Msg("Starting application")
 	app := &application{
 		config: cfg,
 		logger: &logger,
@@ -131,4 +149,23 @@ func openDB(cfg config) (*sql.DB, error) {
 
 	// Return the sql.DB connection pool.
 	return db, nil
+}
+
+func migrateDB(db *sql.DB) error {
+	migrationDriver, err := postgres.WithInstance(db, &postgres.Config{})
+	if err != nil {
+		return err
+	}
+
+	migrator, err := migrate.NewWithDatabaseInstance("file://migrations", "shrtnr", migrationDriver)
+	if err != nil {
+		return err
+	}
+
+	err = migrator.Up()
+	if err != nil && err != migrate.ErrNoChange {
+		return err
+	}
+
+	return nil
 }
