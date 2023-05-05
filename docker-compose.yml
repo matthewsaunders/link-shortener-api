@@ -1,0 +1,35 @@
+version: "3.9"
+services:
+  api:
+    build: .
+    ports:
+      - 4000:4000
+    restart: unless-stopped
+    networks:
+      - shrtnr-backend-network
+    stdin_open: true
+    tty: true
+    depends_on:
+      - db
+
+  db:
+    image: library/postgres:13-alpine
+    ports:
+      - 5432:5432
+    restart: unless-stopped
+    networks:
+      - shrtnr-backend-network
+    volumes:
+      - shrtnr-db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=shrtnr
+      - POSTGRES_PASSWORD=password
+
+volumes:
+  shrtnr-db:
+    driver: local
+
+networks:
+  shrtnr-backend-network:
+    driver: bridge
+
