@@ -29,11 +29,9 @@ type application struct {
 }
 
 func main() {
-	fmt.Println("-- main")
-
 	var cfg config
 
-	flag.StringVar(&cfg.db.dsn, "db-dsn", "postgres://shrtnr:password@localhost/shrtnr?sslmode=disable", "PostgreSQL DSN")
+	flag.StringVar(&cfg.db.dsn, "db-dsn", "postgres://shrtnr:shrtnr@localhost:8080/shrtnr?sslmode=disable", "PostgreSQL DSN")
 
 	flag.IntVar(&cfg.db.maxOpenConns, "db-max-open-conns", 25, "PostgreSQL max open connections")
 	flag.IntVar(&cfg.db.maxIdleConns, "db-max-idle-conns", 25, "PostgreSQL max open idle connections")
